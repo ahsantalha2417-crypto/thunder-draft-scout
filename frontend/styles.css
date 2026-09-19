@@ -1,0 +1,199 @@
+/* Thunder Draft Scout - styles
+   Color tokens follow the project's data-viz reference palette so the UI
+   chrome and the chart share one system. Light/dark both selected. */
+
+:root {
+  --surface-1: #fcfcfb;
+  --page-plane: #f9f9f7;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --gridline: #e1e0d9;
+  --border: rgba(11, 11, 11, 0.10);
+
+  --series-1: #2a78d6; /* prospect */
+  --series-2: #eb6834; /* position average */
+
+  --status-good: #0ca30c;
+  --status-good-text: #006300;
+  --status-critical: #d03b3b;
+
+  --radius: 10px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface-1: #1a1a19;
+    --page-plane: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --gridline: #2c2c2a;
+    --border: rgba(255, 255, 255, 0.10);
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --status-good: #0ca30c;
+    --status-good-text: #0ca30c;
+    --status-critical: #e66767;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface-1: #1a1a19;
+  --page-plane: #0d0d0d;
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted: #898781;
+  --gridline: #2c2c2a;
+  --border: rgba(255, 255, 255, 0.10);
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --status-good: #0ca30c;
+  --status-good-text: #0ca30c;
+  --status-critical: #e66767;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--page-plane);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 8px;
+  background: var(--series-1); color: #fff; font-weight: 700; font-size: 13px;
+  flex-shrink: 0;
+}
+.topbar h1 { font-size: 17px; margin: 0; }
+.tagline { margin: 2px 0 0; font-size: 12.5px; color: var(--text-secondary); }
+.data-pill {
+  font-size: 11.5px; color: var(--text-secondary); background: var(--page-plane);
+  border: 1px solid var(--border); border-radius: 999px; padding: 4px 10px; white-space: nowrap;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 16px;
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; padding: 16px; }
+}
+
+.sidebar {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  align-self: start;
+}
+.sidebar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.sidebar-head h2 { font-size: 14px; margin: 0; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+
+.search-input, input, select, textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--text-primary);
+  background: var(--page-plane);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.search-input { margin-bottom: 10px; }
+
+.prospect-list { list-style: none; margin: 0; padding: 0; max-height: 60vh; overflow-y: auto; }
+.prospect-list li {
+  padding: 9px 10px; border-radius: 6px; cursor: pointer; font-size: 13.5px;
+  display: flex; justify-content: space-between; gap: 8px; align-items: baseline;
+}
+.prospect-list li:hover { background: var(--page-plane); }
+.prospect-list li.active { background: var(--series-1); color: #fff; }
+.prospect-list .pos-tag { font-size: 11px; color: var(--text-muted); }
+.prospect-list li.active .pos-tag { color: rgba(255,255,255,0.85); }
+
+.btn {
+  font: inherit; font-size: 12.5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--border);
+}
+.btn-primary { background: var(--series-1); color: #fff; border-color: transparent; }
+.btn-secondary { background: transparent; color: var(--text-primary); }
+
+.detail { min-height: 300px; }
+.empty-state {
+  display: flex; align-items: center; justify-content: center; height: 300px;
+  color: var(--text-muted); background: var(--surface-1); border: 1px dashed var(--border); border-radius: var(--radius);
+}
+
+.report-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 4px; }
+.report-head h2 { margin: 0; font-size: 20px; }
+.muted { color: var(--text-secondary); }
+.small { font-size: 11.5px; font-weight: 400; }
+
+.durability { text-align: right; background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; }
+.durability-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.durability-value { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.summary { color: var(--text-secondary); line-height: 1.5; margin: 10px 0 18px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+@media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;
+}
+.card h3 { margin: 0 0 10px; font-size: 13.5px; }
+.good-text { color: var(--status-good-text); }
+.critical-text { color: var(--status-critical); }
+
+.comps-table, .sr-only-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.comps-table th, .comps-table td { text-align: left; padding: 6px 6px; border-bottom: 1px solid var(--gridline); font-variant-numeric: tabular-nums; }
+.comps-table th { color: var(--text-muted); font-weight: 500; font-size: 11.5px; }
+
+.sr-only-table { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.tag-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.tag-list li { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: var(--page-plane); border: 1px solid var(--border); }
+.tag-good li { border-color: color-mix(in srgb, var(--status-good) 40%, transparent); }
+.tag-critical li { border-color: color-mix(in srgb, var(--status-critical) 40%, transparent); }
+.tag-list:empty::after { content: "None flagged"; color: var(--text-muted); font-size: 12px; }
+
+/* Data-provenance badges - deliberately loud, so a synthetic comp is never
+   mistaken for a real person. */
+.source-badge {
+  display: inline-block; font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.03em; padding: 2px 7px; border-radius: 999px; margin-left: 8px;
+  vertical-align: middle; position: relative; top: -2px;
+}
+.source-badge.real { background: color-mix(in srgb, var(--status-good) 18%, transparent); color: var(--status-good-text); border: 1px solid color-mix(in srgb, var(--status-good) 45%, transparent); }
+.source-badge.live { background: color-mix(in srgb, var(--series-1) 18%, transparent); color: var(--series-1); border: 1px solid color-mix(in srgb, var(--series-1) 45%, transparent); }
+.source-badge.synthetic { background: color-mix(in srgb, var(--text-muted) 18%, transparent); color: var(--text-secondary); border: 1px solid var(--border); }
+
+.citation { font-style: italic; margin-top: 2px; }
+#compsCaveat { margin-top: -4px; margin-bottom: 10px; }
+.comps-table td.data-cell { white-space: nowrap; }
+
+dialog { border: none; border-radius: var(--radius); padding: 20px; max-width: 560px; width: 92vw; background: var(--surface-1); color: var(--text-primary); }
+dialog::backdrop { background: rgba(0,0,0,0.4); }
+dialog h2 { margin-top: 0; font-size: 16px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.form-grid label, .full-width { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-secondary); margin-top: 10px; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }

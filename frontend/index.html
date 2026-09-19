@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Thunder Draft Scout</title>
+<link rel="stylesheet" href="styles.css" />
+<script src="vendor/chart.umd.js"></script>
+</head>
+<body class="viz-root">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">TDS</span>
+      <div>
+        <h1>Thunder Draft Scout</h1>
+        <p class="tagline">Prospect comparison &amp; scouting-report tool &mdash; Basketball Operations</p>
+      </div>
+    </div>
+    <span class="data-pill" id="dataSourcePill">loading&hellip;</span>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <h2>Prospects</h2>
+        <button id="addProspectBtn" class="btn btn-secondary" type="button">+ Add</button>
+      </div>
+      <input id="prospectSearch" class="search-input" type="search" placeholder="Search prospects&hellip;" />
+      <ul id="prospectList" class="prospect-list" aria-label="Prospect list"></ul>
+    </aside>
+
+    <section class="detail" id="detail">
+      <div class="empty-state" id="emptyState">
+        <p>Select a prospect on the left to generate a scouting report.</p>
+      </div>
+
+      <div class="report" id="report" hidden>
+        <div class="report-head">
+          <div>
+            <h2 id="playerName">&mdash;<span id="sourceBadge"></span></h2>
+            <p id="playerMeta" class="muted"></p>
+            <p id="scoutNote" class="muted small" hidden></p>
+            <p id="sourceNote" class="muted small citation" hidden></p>
+          </div>
+          <div class="durability" id="durabilityBox">
+            <div class="durability-label">Availability</div>
+            <div class="durability-value" id="durabilityValue">&mdash;</div>
+          </div>
+        </div>
+
+        <p class="summary" id="summaryText"></p>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>Percentile profile <span class="muted small">vs. position peers</span></h3>
+            <canvas id="radarChart" role="img" aria-label="Radar chart of percentile stats"></canvas>
+            <table class="sr-only-table" id="percentileTable">
+              <caption>Percentile profile, table view</caption>
+              <thead><tr><th>Stat</th><th>Value</th><th>Percentile</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h3>Top 5 statistical comps</h3>
+            <p class="muted small" id="compsCaveat"></p>
+            <table class="comps-table" id="compsTable">
+              <thead>
+                <tr><th>Player</th><th>Team</th><th>PTS</th><th>REB</th><th>AST</th><th>Similarity</th><th>Data</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="good-text">Strengths</h3>
+            <ul id="strengthsList" class="tag-list tag-good"></ul>
+          </div>
+          <div class="card">
+            <h3 class="critical-text">Areas to develop</h3>
+            <ul id="weaknessesList" class="tag-list tag-critical"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="addProspectDialog">
+    <form id="addProspectForm" method="dialog">
+      <h2>Add prospect</h2>
+      <p class="muted small">All fields are stored locally in this project's own database &mdash; see the README section on handling confidential data before pointing this at anything real.</p>
+      <div class="form-grid">
+        <label>Name <input name="name" required maxlength="120" /></label>
+        <label>Position
+          <select name="position" required>
+            <option value="PG">PG</option><option value="SG">SG</option><option value="SF">SF</option>
+            <option value="PF">PF</option><option value="C">C</option>
+          </select>
+        </label>
+        <label>Age <input name="age" type="number" step="0.1" min="16" max="40" /></label>
+        <label>Height (in) <input name="height_in" type="number" step="0.1" /></label>
+        <label>Wingspan (in) <input name="wingspan_in" type="number" step="0.1" /></label>
+        <label>Weight (lb) <input name="weight_lb" type="number" step="1" /></label>
+        <label>Games played <input name="games_played" type="number" step="1" min="0" max="100" /></label>
+        <label>Minutes/G <input name="minutes_pg" type="number" step="0.1" /></label>
+        <label>PTS/G <input name="pts_pg" type="number" step="0.1" /></label>
+        <label>REB/G <input name="reb_pg" type="number" step="0.1" /></label>
+        <label>AST/G <input name="ast_pg" type="number" step="0.1" /></label>
+        <label>STL/G <input name="stl_pg" type="number" step="0.1" /></label>
+        <label>BLK/G <input name="blk_pg" type="number" step="0.1" /></label>
+        <label>TOV/G <input name="tov_pg" type="number" step="0.1" /></label>
+        <label>FG% (0-1) <input name="fg_pct" type="number" step="0.001" min="0" max="1" /></label>
+        <label>3P% (0-1) <input name="fg3_pct" type="number" step="0.001" min="0" max="1" /></label>
+        <label>FT% (0-1) <input name="ft_pct" type="number" step="0.001" min="0" max="1" /></label>
+        <label>TS% (0-1) <input name="ts_pct" type="number" step="0.001" min="0" max="1" /></label>
+        <label>Usage% <input name="usage_pct" type="number" step="0.1" /></label>
+      </div>
+      <label class="full-width">Injury / physical notes <textarea name="injury_notes" rows="2"></textarea></label>
+      <label class="full-width">Source (if this is a real person, cite where the numbers came from)
+        <input name="source_note" placeholder="e.g. ESPN box score, 2026-11-03" />
+      </label>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" id="cancelAddProspect">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save prospect</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

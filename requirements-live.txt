@@ -1,0 +1,10 @@
+# Optional: only needed if you want to pull REAL stats from stats.nba.com
+# instead of the bundled synthetic demo data.
+#
+#   pip install -r requirements-live.txt
+#   python backend/data/fetch_live_data.py
+#
+# nba_api talks to stats.nba.com directly, so it needs to run somewhere with
+# normal outbound internet access (it will NOT work from a locked-down
+# sandbox/CI network - stats.nba.com actively blocks data-center IPs).
+nba_api==1.5.2

@@ -1,0 +1,14 @@
+services:
+  thunder-draft-scout:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist the SQLite DB across container restarts. Delete this volume
+      # (or point DATABASE_URL at Postgres) to start fresh.
+      - scout-data:/app/backend/data
+    environment:
+      - DATABASE_URL=sqlite:////app/backend/data/thunder_scout.db
+
+volumes:
+  scout-data:
