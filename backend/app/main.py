@@ -25,8 +25,8 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Thunder Draft Scout API",
-    description="Draft prospect comparison & scouting-report tool built for the "
-    "OKC Thunder Basketball Operations Software Engineer Intern application.",
+    description="Draft prospect comparison & scouting-report tool for basketball "
+    "operations analytics.",
     version="0.1.0",
 )
 

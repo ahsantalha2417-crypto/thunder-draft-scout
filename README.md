@@ -1,34 +1,44 @@
 # Thunder Draft Scout
 
-A full-stack draft-prospect comparison and scouting-report tool, built as a
-portfolio project for the **OKC Thunder Software Engineer Intern, Basketball
-Operations** posting. It's a small end-to-end slice of what that role
-describes: a data system that ingests player performance data, evaluates
-prospects against it, and surfaces the result through an application a
-scout or analyst could actually use.
+A full-stack draft-prospect comparison and scouting-report tool for basketball
+operations analytics. It ingests player performance data, evaluates draft
+prospects against a comparable-player pool, and surfaces the results through
+a web application a scout or analyst could actually use — covering the data
+engineering, backend, and frontend work behind that kind of tool end to end.
 
 > **Data note:** the 18 **prospects** are real, named, individually-sourced
 > people - see "Data sources" below for a citation on every one. The
 > ~150-player **comp pool** that ships by default is still **synthetic**
-> (fictional names/stats), because generating it for real requires running
-> `backend/data/fetch_live_data.py` from a machine with normal internet
-> access (see "Pulling real NBA stats" below) - this sandbox can't reach
-> `stats.nba.com`. The app makes this unmistakable at runtime: every player
+> (fictional names/stats) - populating it with real stats means running
+> `backend/data/fetch_live_data.py` (see "Pulling real NBA stats" below)
+> from a machine with normal internet access, since `stats.nba.com` blocks
+> most cloud/data-center IP ranges. The app makes this unmistakable at runtime: every player
 > card and comp-table row carries a "Real · sourced" / "Live NBA stats" /
 > "Synthetic demo" badge, and the header pill shows the live split (e.g.
 > "18/18 prospects real · 150 comp-pool (synthetic)"). Run the live fetch
 > before presenting this and that pill becomes fully real end to end.
 
-## Why this project, for this role
+## Highlights
 
-| Posting asks for... | Where it shows up here |
-|---|---|
-| Manage/implement/maintain data systems for player evaluation & strategic planning | SQLAlchemy-backed data model (`backend/app/models.py`), a pluggable ingestion layer (synthetic vs. live), and a REST API over it |
-| Python, JavaScript, SQL | FastAPI + SQLAlchemy backend (Python/SQL), vanilla JS + Chart.js frontend |
-| Front-end / back-end engineering, data engineering, database admin, cloud services | Full FastAPI backend, static JS frontend, SQLite-by-default schema that's a one-line env var away from Postgres, Dockerfile + docker-compose for deployment |
-| Support basketball analytics, player evaluation, physical research | A z-score/k-NN player-comp engine, percentile-based scouting reports, and a durability/availability score as a stand-in for physical-performance monitoring |
-| Collaborate on real-time, data-driven decision-making tools | A working API + dashboard a scout could query live while evaluating a prospect |
-| Working with & protecting confidential information | See "Handling confidential information" below |
+- **End-to-end data pipeline** — ingestion (synthetic demo data or live NBA
+  stats) → SQL database → REST API → frontend, with nothing precomputed or
+  cached, so every view reflects the current database state.
+- **An explainable player-similarity engine** — z-scored, hand-weighted
+  Euclidean distance that surfaces statistical comps for a given prospect,
+  with a clear interface (`prospect + pool -> ranked comps`) a more
+  sophisticated model could slot into later.
+- **Automated scouting reports** — percentile ranks against positional
+  peers, templated strength/weakness callouts, and a durability/availability
+  metric that uses different, context-appropriate yardsticks for pros vs.
+  college prospects (see "The comp engine, briefly" below).
+- **Honest data provenance** — every record is explicitly labeled real
+  (individually sourced and cited), live (pulled from the NBA's own stats
+  API), or synthetic demo data; the UI never lets the three blur together.
+- **Deployable by design** — FastAPI + SQLAlchemy backend, vanilla JS
+  frontend, SQLite by default and a one-line env var away from Postgres,
+  Dockerfile + docker-compose included.
+- **Confidential-data-aware defaults** — see "Handling confidential
+  information" below for the specific choices this reflects.
 
 ## Architecture
 
@@ -191,10 +201,8 @@ round-trip).
 
 ## Handling confidential information
 
-The posting specifically calls out "experience working with and protecting
-confidential information" - real basketball-ops data (medical records,
-contract details, scouting notes) is sensitive, so a few things worth
-calling out even in a demo project:
+Real basketball-ops data (medical records, contract details, scouting notes)
+is sensitive, so a few design choices reflect that even in a demo project:
 
 - The `injury_notes` / `scout_notes` fields are deliberately free text, not
   structured medical data - this project stores availability (games played)
@@ -209,9 +217,9 @@ calling out even in a demo project:
   the five valid codes), which is the first line of defense against bad or
   malicious input reaching the database.
 
-None of this is production-grade security - it's meant to show awareness of
-the problem in a project scoped for an internship application, not to be a
-HIPAA-compliant system.
+None of this is production-grade security on its own - it demonstrates the
+underlying patterns (env-based config, input validation, no free-text health
+records) rather than being a complete compliance solution.
 
 ## Possible next steps
 
